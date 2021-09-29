@@ -2,31 +2,49 @@ import React, {useEffect, useState} from 'react'
 
 const Vehiculos = () => {
 
-    const [nombreVehiculo, setNombreVehiculo] = useState('');
+    const [edad, setEdad] = useState(0)
+    const [esMenorEdad, setEsMenorEdad] = useState(false)
 
     useEffect(()=>{
-    console.log('Hola soy un use effect que se ejecuta una sola vez')},[])
-
-    
-
-    const enviarDatosAlBackend = () => {
-        console.log('El valor de la variable nombreVehiculo es: ', nombreVehiculo)
-
-    }
-
+        if (edad>=18){
+            setEsMenorEdad(false)
+        } else {
+            setEsMenorEdad(true)
+        }
+    })
     return (
         <div className ='' >
-            <form className='flex flex-col content-center justify-items-center' >
-                <h2>Formulario creacion de vehiculo</h2>
-                <input onChange={(e) =>{setNombreVehiculo(e.target.value)}}
-                    type="text" placeholder='Nombre del vehiculo' />
-                <input onChange={ (e) =>{console.log('Marca: ',e.target.value) }}
-                    type="text" placeholder='Marca del vehiculo'/>
-                <input type="text" placeholder='Modelo del vehiculo'/>
-                <button type='button' onClick={enviarDatosAlBackend} className='bg-indigo-500 text-white'>Enviar datos</button>
+            <h2>Formulario creacion de vehiculo</h2>
+            <form className='flex flex-col ' >
+                <label htmlFor="edad">
+                    Por favor ingrese su edad
+                
+                <input 
+                value={edad}
+                onChange={(e) =>{
+                    setEdad(e.target.value)
+                }}
+                 className='border border-gray-600' type="number" name="edad"  />
+                </label>
+                {
+                    esMenorEdad? (
+                        <span className= 'text-3xl text-green-500'>
+                            Usted es menor de edad
+                            </span>
+                        ) : (
+                        <span className= 'text-3xl text-red-500'>
+                            Usted es mayor de edad
+                            </span>
+                        )
+
+                    }
+                
+                       
+                       
             </form>
         </div>
     )
 }
+
 
 export default Vehiculos
