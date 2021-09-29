@@ -6,7 +6,7 @@ const Publiclayout = ({children}) => {
     return (
         <div className="flex flex-col justify-between h-screen" >
             <Navbar></Navbar>
-            <main className="flex h-full overflow-y-scroll bg-blue-400  ">{children}</main>
+            <main className="flex h-full overflow-y-scroll ">{children}</main>
             <Footer></Footer>
         </div>
     );
