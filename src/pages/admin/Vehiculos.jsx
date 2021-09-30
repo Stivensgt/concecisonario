@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -111,26 +111,28 @@ const TablaVehiculos = ({listaVehiculos})=>{
 
 const FormularioVehiculos = ({mostrartabla, listaVehiculos,agregarVehiculo})=>{
 
-    const [nombre,setNombre] = useState('')
-    const [marca,setMarca] = useState('')
-    const [modelo,setModelo] = useState('')
+    const form = useRef(null)
+    
 
-    const enviarBackend = () =>{
-        console.log('nombre',nombre,'marca',marca,'modelo',modelo)
-        if (nombre=== '' || marca=== '' || modelo===''){
+    
+    const submitform =(e)=>{
+        e.preventDefault()
+        const fd = new FormData(form.current)
+        const nuevoVehiculo = {};
+        fd.forEach((value,key) => {
+            nuevoVehiculo[key] = value
+        })
 
-        }else{
-        toast.success('Vehiculo creado con exito')
         mostrartabla(true)
-        agregarVehiculo([...listaVehiculos,
-            {nombre:nombre,marca:marca,modelo:modelo}])}
+        toast.success('Vehiculo agregado con exito')
+        agregarVehiculo([...listaVehiculos,nuevoVehiculo])
 
     }
-    
+
     return(
         <div className='flex flex-col justify-center items-center'>
             <h2 className='text-gray-800 text-2xl font-extrabold'>Crear nuevo vehiculo</h2>
-            <form className='grid grid-cols-2'>
+            <form ref={form} onSubmit={submitform} className='grid grid-cols-2'>
                 <label htmlFor="nombre">
                     Nombre del vehiculo
                 <input 
@@ -138,20 +140,20 @@ const FormularioVehiculos = ({mostrartabla, listaVehiculos,agregarVehiculo})=>{
                     className='bg-gray-50 border border-gray-600 p-2 rounded-lg m-2 ' 
                     type="text"
                     placeholder='Corolla'
-                    value= {nombre}
-                    onChange= {(e)=>(setNombre(e.target.value))}
+                    
                     required
                 />
                 </label>
                 <label htmlFor="marca">
                     Marca del vehiculo
                     <select 
-                        value= {marca}
-                        onChange= {(e)=>(setMarca(e.target.value))}
+                        
                         className='bg-gray-50 border border-gray-600 p-2 rounded-lg m-2 ' name='marca'
-                        required >
+                        defaultValue= {0}
+                        required
+                         >
                     
-                        <option disabled>Seleccion una opcion</option>
+                        <option disabled value={0}>Seleccion una opcion</option>
                         <option >Renault</option>
                         <option >Toyota</option>
                         <option >Ford</option>
@@ -168,8 +170,7 @@ const FormularioVehiculos = ({mostrartabla, listaVehiculos,agregarVehiculo})=>{
                     min= {1992}
                     max= {2022}
                     placeholder='2014'
-                    value= {modelo}
-                    onChange= {(e)=>(setModelo(e.target.value))}
+                    
                     required
                 />
                 
@@ -177,9 +178,6 @@ const FormularioVehiculos = ({mostrartabla, listaVehiculos,agregarVehiculo})=>{
                
                 <button 
                 type='submit'
-                onClick={()=>{
-                    enviarBackend()
-                }}
                 className='col-span-2 bg-green-400 p-2 rounded-lg shadow-md hover:bg-green-600 text-white'> Guardar vehiculo</button>
             </form>
         </div>
