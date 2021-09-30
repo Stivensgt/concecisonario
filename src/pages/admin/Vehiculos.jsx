@@ -111,16 +111,19 @@ const TablaVehiculos = ({listaVehiculos})=>{
 
 const FormularioVehiculos = ({mostrartabla, listaVehiculos,agregarVehiculo})=>{
 
-    const [nombre,setNombre] = useState()
-    const [marca,setMarca] = useState()
-    const [modelo,setModelo] = useState()
+    const [nombre,setNombre] = useState('')
+    const [marca,setMarca] = useState('')
+    const [modelo,setModelo] = useState('')
 
     const enviarBackend = () =>{
         console.log('nombre',nombre,'marca',marca,'modelo',modelo)
+        if (nombre=== '' || marca=== '' || modelo===''){
+
+        }else{
         toast.success('Vehiculo creado con exito')
         mostrartabla(true)
         agregarVehiculo([...listaVehiculos,
-            {nombre:nombre,marca:marca,modelo:modelo}])
+            {nombre:nombre,marca:marca,modelo:modelo}])}
 
     }
     
@@ -137,6 +140,7 @@ const FormularioVehiculos = ({mostrartabla, listaVehiculos,agregarVehiculo})=>{
                     placeholder='Corolla'
                     value= {nombre}
                     onChange= {(e)=>(setNombre(e.target.value))}
+                    required
                 />
                 </label>
                 <label htmlFor="marca">
@@ -144,7 +148,9 @@ const FormularioVehiculos = ({mostrartabla, listaVehiculos,agregarVehiculo})=>{
                     <select 
                         value= {marca}
                         onChange= {(e)=>(setMarca(e.target.value))}
-                        className='bg-gray-50 border border-gray-600 p-2 rounded-lg m-2 ' name='marca' >
+                        className='bg-gray-50 border border-gray-600 p-2 rounded-lg m-2 ' name='marca'
+                        required >
+                    
                         <option disabled>Seleccion una opcion</option>
                         <option >Renault</option>
                         <option >Toyota</option>
@@ -164,12 +170,13 @@ const FormularioVehiculos = ({mostrartabla, listaVehiculos,agregarVehiculo})=>{
                     placeholder='2014'
                     value= {modelo}
                     onChange= {(e)=>(setModelo(e.target.value))}
+                    required
                 />
                 
                 </label>
                
                 <button 
-                type='button'
+                type='submit'
                 onClick={()=>{
                     enviarBackend()
                 }}
