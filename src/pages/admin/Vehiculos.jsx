@@ -1,35 +1,11 @@
 import React, {useEffect, useState, useRef} from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 
-const vehiculosBackend =[
-    {
-    nombre: 'Corolla',
-    marca: 'Toyota',
-    modelo: 2014
-    },
-    {
-    nombre: 'Sandero',
-    marca: 'Renault',
-    modelo: 2014
-    },
-    {
-    nombre: 'Duster',
-    marca: 'Renault',
-    modelo: 2020
-    },
-    {
-    nombre: 'Rav4',
-    marca: 'Toyota',
-    modelo: 2012
-    },
-    {
-    nombre: 'Fiesta',
-    marca: 'Ford',
-    modelo: 2003
-    }
 
-]
+
+
 const Vehiculos = () => {
     const [mostrartabla,setMostrartabla] = useState(true)
     const [textoBoton,setTextoBoton] = useState('Crear nuevo vehiculo')
@@ -37,8 +13,17 @@ const Vehiculos = () => {
     const [colorBoton,setColorBoton] = useState('indigo')
     
     useEffect(()=>{
-        //obetener lista de vehiculos desde el backend
-        setVehiculos(vehiculosBackend)
+        const obtenerVehiculos = async () => {
+            const options = { method: 'GET', url: 'https://vast-waters-45728.herokuapp.com/vehicle/' };
+            await axios
+              .request(options)
+              .then(function (response) {
+                setVehiculos(response.data);
+              })
+              .catch(function (error) {
+                console.error(error);
+              });
+          };
 
 
 
@@ -96,9 +81,9 @@ const TablaVehiculos = ({listaVehiculos})=>{
                 {listaVehiculos.map((vehiculos)=>{
                     return (
                     <tr>
-                        <td>{vehiculos.nombre}</td>
-                        <td>{vehiculos.marca}</td>
-                        <td>{vehiculos.modelo}</td>
+                        <td>{vehiculos.name}</td>
+                        <td>{vehiculos.brand}</td>
+                        <td>{vehiculos.model}</td>
                     </tr>
                 )}
                 )}
@@ -115,17 +100,38 @@ const FormularioVehiculos = ({mostrartabla, listaVehiculos,agregarVehiculo})=>{
     
 
     
-    const submitform =(e)=>{
+    const submitform = async(e)=>{
         e.preventDefault()
         const fd = new FormData(form.current)
+
+
         const nuevoVehiculo = {};
         fd.forEach((value,key) => {
             nuevoVehiculo[key] = value
         })
 
+        const options = {
+            method: 'POST',
+            url: 'https://vast-waters-45728.herokuapp.com/vehicle/create',
+            headers: { 'Content-Type': 'application/json' },
+            data: { name: nuevoVehiculo.name, brand: nuevoVehiculo.brand, model: nuevoVehiculo.model },
+          };
+
+        await axios
+        .request(options)
+        .then(function (response) {
+        console.log(response.data);
+        toast.success('Vehículo agregado con éxito');
+      })
+      .catch(function (error) {
+        console.error(error);
+        toast.error('Error creando un vehículo');
+      });
+
+
         mostrartabla(true)
-        toast.success('Vehiculo agregado con exito')
-        agregarVehiculo([...listaVehiculos,nuevoVehiculo])
+        
+        
 
     }
 
@@ -133,7 +139,7 @@ const FormularioVehiculos = ({mostrartabla, listaVehiculos,agregarVehiculo})=>{
         <div className='flex flex-col justify-center items-center'>
             <h2 className='text-gray-800 text-2xl font-extrabold'>Crear nuevo vehiculo</h2>
             <form ref={form} onSubmit={submitform} className='grid grid-cols-2'>
-                <label htmlFor="nombre">
+                <label htmlFor="name">
                     Nombre del vehiculo
                 <input 
                     name='nombre'
@@ -144,7 +150,7 @@ const FormularioVehiculos = ({mostrartabla, listaVehiculos,agregarVehiculo})=>{
                     required
                 />
                 </label>
-                <label htmlFor="marca">
+                <label htmlFor="brand">
                     Marca del vehiculo
                     <select 
                         
@@ -161,7 +167,7 @@ const FormularioVehiculos = ({mostrartabla, listaVehiculos,agregarVehiculo})=>{
                         <option >Chevrolet</option>
                     </select>
                 </label>
-                <label htmlFor="modelo">
+                <label htmlFor="model">
                     Modelo del vehiculo
                 <input 
                     name='modelo'
